@@ -22,7 +22,7 @@ distracted_students <- data4 %>%
 # Printing result
 print(distracted_students)
 
-lm1 <- lm(total_sections ~ distracted_count, data = distracted_students )
+lm1 <- lm( distracted_count ~ total_sections, data = distracted_students )
 summary(lm1) ##Gives us summary of our LM model above
 
 library(ggplot2)
@@ -69,6 +69,8 @@ ggplot(median_eoc, aes(x = chapter_number, y = median_eoc)) +
         panel.grid.major = element_line(color = 'black'))
 
 ##Analysis 3
+merged_data <- merge(pageView, items, by = c("chapter", "page"), all = TRUE)
+
 engaged_data <- merged_data %>%
   group_by(lrn_type) %>%
   summarise(
@@ -88,6 +90,35 @@ ggplot(engaged_data, aes(x = reorder(lrn_type, median_eng), y = median_eng)) +
         panel.grid.major = element_blank(),  
         panel.grid.minor = element_blank(), 
         plot.title = element_text(hjust = 0.5))
+
+
+##Review against type of question
+review_count_data <- items %>%
+  group_by(lrn_type) %>%
+  summarise(
+    review_count = sum(review_flag== TRUE, na.rm = TRUE) # Count occurrences of TRUE
+  )
+
+# Order review_count_data by review_count in ascending order
+review_count_data <- review_count_data[order(review_count_data$review_count),]
+
+review_count_data_nonzero <- review_count_data %>%
+  filter(!is.na(lrn_type), review_count > 0)
+review_count_data_zero <- review_count_data %>%
+  filter(!is.na(lrn_type), review_count == 0)
+
+# Plotting the bar plot for non-zero counts
+p <- ggplot(review_count_data_nonzero, aes(x = reorder(lrn_type, review_count), y = review_count)) +
+  geom_bar(stat = "identity", fill = "blue", color = "black") +
+  labs(x = "Learnosity type", y = "Review Flag Count", title = "Review Flag Count by Learnosity Type") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1), 
+        panel.grid.major = element_blank(),  
+        panel.grid.minor = element_blank(), 
+        plot.title = element_text(hjust = 0.5))
+
+# Adding points for zero counts
+p + geom_point(data = review_count_data_zero, aes(x = reorder(lrn_type, review_count), y = review_count), size = 3, color = "red")
 
 ##Analysis 4
 merged_data <- merge(checkpoint, pageView, by = c('book', 'release', 'chapter_number'), all = TRUE)
