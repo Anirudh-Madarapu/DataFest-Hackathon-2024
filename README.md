@@ -25,6 +25,8 @@ ggplot(median_eoc, aes(x = chapter_number, y = median_eoc)) +
 ```
 ![image](https://github.com/Anirudh-Madarapu/DataFest-Hackathon-2024/assets/123264579/a9cae805-4bdb-45f6-a18c-969c1215459b)
 
+![image](https://github.com/Anirudh-Madarapu/DataFest-Hackathon-2024/assets/123264579/dfc6c954-fcae-4f7e-8e1d-1bd3e9cdca22)
+
 ## 2nd Graphic
 The code associated with 2nd Graphic
 ```distracted_students <- data4 %>%
